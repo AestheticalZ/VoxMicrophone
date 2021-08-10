@@ -100,6 +100,11 @@ namespace VoxMicrophone
 
                     if (int.TryParse(command[1], out int deviceNum))
                     {
+                        if(deviceNum > WaveOut.DeviceCount)
+                        {
+                            PrintError("This device number exceeds the amount of available devices.");
+                            goto EnterCommand;
+                        }
                         waveOut.DeviceNumber = deviceNum;
                         PrintMessage($"Selected device is now \"{WaveOut.GetCapabilities(deviceNum).ProductName}\".");
                         DeviceSelected = true;
