@@ -1,10 +1,9 @@
-﻿using System;
+﻿using NAudio.Wave;
 using Pastel;
-using System.Drawing;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using NAudio.Wave;
-using System.IO;
 
 namespace VoxMicrophone
 {
@@ -31,12 +30,12 @@ namespace VoxMicrophone
             VoxSpeaker voxSpeaker = new VoxSpeaker();
             WaveOut waveOut = new WaveOut();
 
-            EnterCommand:
+        EnterCommand:
             Console.Write("\n-> ".Pastel(Color.CornflowerBlue));
 
             string[] command = Console.ReadLine().Trim().ToLower().Split(' ');
             Console.WriteLine();
-            switch(command[0])
+            switch (command[0])
             {
                 case "say":
                     if (command.Length == 1)
@@ -53,7 +52,7 @@ namespace VoxMicrophone
                     List<string> sentence = command.ToList(); sentence.RemoveAt(0);
 
                     PrintMessage("Processing sentence...");
-                    if(voxSpeaker.ProcessText(sentence, SelectedVoice) == 1)
+                    if (voxSpeaker.ProcessText(sentence, SelectedVoice) == 1)
                     {
                         goto EnterCommand;
                     }
@@ -81,7 +80,7 @@ namespace VoxMicrophone
                         goto EnterCommand;
                     }
 
-                    if(!ValidVoices.Contains(command[1]))
+                    if (!ValidVoices.Contains(command[1]))
                     {
                         PrintError($"Voice \"{command[1]}\" does not exist.");
                         goto EnterCommand;
@@ -100,9 +99,9 @@ namespace VoxMicrophone
 
                     if (int.TryParse(command[1], out int deviceNum))
                     {
-                        if(deviceNum > WaveOut.DeviceCount)
+                        if (deviceNum > WaveOut.DeviceCount || deviceNum < -1)
                         {
-                            PrintError("This device number exceeds the amount of available devices.");
+                            PrintError("This device does not exist.");
                             goto EnterCommand;
                         }
                         waveOut.DeviceNumber = deviceNum;
@@ -113,7 +112,7 @@ namespace VoxMicrophone
                     goto EnterCommand;
 
                 case "setdelay":
-                    if(command.Length == 1)
+                    if (command.Length == 1)
                     {
                         PrintError("Not enough arguments.");
                         goto EnterCommand;
